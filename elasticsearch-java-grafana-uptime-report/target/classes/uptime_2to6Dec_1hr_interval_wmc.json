@@ -1,45 +1,45 @@
 {
-  "size": 0,
-  "query": {
-    "bool": {
-      "filter": [
-        {
-          "range": {
-            "@timestamp": {
-              "gte": "2024-12-01T18:30:00.000Z",
-              "lt": "2024-12-07T06:30:00.000Z"
-            }
-          }
-        },
-		 {
-	       "term": {
-	              "category.keyword": "BLACKROCK_WMC"
-	          }
-         }
-      ]
-    }
-  },
-  "aggs": {
-    "group_by_url": {
-      "terms": {
-        "field": "url.keyword",
-        "size": 10
-      },
-      "aggs": {
-        "hourly_avg": {
-          "date_histogram": {
-            "field": "@timestamp",
-            "fixed_interval": "1h"
-          },
-          "aggs": {
-            "avg_uptime": {
-              "avg": {
-                "field": "uptime_percentage"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+	"size": 0,
+	"query": {
+		"bool": {
+			"filter": [
+				{
+					"range": {
+						"@timestamp": {
+							"gte": "2024-12-01T18:30:00.000Z",
+							"lt": "2024-12-07T18:30:00.000Z"
+						}
+					}
+				},
+				{
+					"term": {
+						"category.keyword": "BLACKROCK_WMC"
+					}
+				}
+			]
+		}
+	},
+	"aggs": {
+		"group_by_url": {
+			"terms": {
+				"field": "url.keyword",
+				"size": 10
+			},
+			"aggs": {
+				"hourly_avg": {
+					"date_histogram": {
+						"field": "@timestamp",
+						"fixed_interval": "1h"
+					},
+					"aggs": {
+						"avg_uptime": {
+							"avg": {
+								"field": "uptime_percentage"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

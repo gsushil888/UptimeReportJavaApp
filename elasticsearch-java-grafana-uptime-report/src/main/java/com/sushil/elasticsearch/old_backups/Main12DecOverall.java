@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.old_backups;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
@@ -30,6 +30,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.sushil.elasticsearch.ConfigLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,7 +53,7 @@ import jakarta.activation.*;
 
 import java.util.Properties;
 
-public class UpTimeIndexAll8To8Overall {
+public class Main12DecOverall {
 
 	private static final String JSON_FILE_PATH = ConfigLoader.get("json.file.path");
 	private static final String JSON_FILE_PATH_OVERALL = ConfigLoader.get("json.file.path.overall");
@@ -79,12 +80,12 @@ public class UpTimeIndexAll8To8Overall {
 	private static final String EMAIL_PASSWORD = ConfigLoader.get("email.password");
 
 	public static void main(String[] args) {
-		generateAndSendReport(PDF_FILE_PATH, "JFS", UpTimeIndexAll8To8Overall::extractOverallAverageUptimeJFS,
-				UpTimeIndexAll8To8Overall::extractAllUptimeRecordsJFS);
-		generateAndSendReport(PDF_FILE_PATH_WMC, "BLACKROCK WMC", UpTimeIndexAll8To8Overall::extractOverallAverageUptimeWMC,
-				UpTimeIndexAll8To8Overall::extractAllUptimeRecordsWMC);
-		generateAndSendReport(PDF_FILE_PATH_AMC, "BLACKROCK AMC", UpTimeIndexAll8To8Overall::extractOverallAverageUptimeAMC,
-				UpTimeIndexAll8To8Overall::extractAllUptimeRecordsAMC);
+		generateAndSendReport(PDF_FILE_PATH, "JFS", Main12DecOverall::extractOverallAverageUptimeJFS,
+				Main12DecOverall::extractAllUptimeRecordsJFS);
+		generateAndSendReport(PDF_FILE_PATH_WMC, "BLACKROCK WMC", Main12DecOverall::extractOverallAverageUptimeWMC,
+				Main12DecOverall::extractAllUptimeRecordsWMC);
+		generateAndSendReport(PDF_FILE_PATH_AMC, "BLACKROCK AMC", Main12DecOverall::extractOverallAverageUptimeAMC,
+				Main12DecOverall::extractAllUptimeRecordsAMC);
 	}
 
 	private static void generateAndSendReport(String pdfFilePath, String reportName,

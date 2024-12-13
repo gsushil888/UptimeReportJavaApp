@@ -1,0 +1,361 @@
+//Specified Interval overall uptime %
+GET uptime_index/_search
+{
+	"size": 0,
+	"query": {
+		"bool": {
+			"filter": [
+				{
+					"range": {
+						"@timestamp": {
+							"gte": "2024-12-01T18:30:00.000Z",
+							"lt": "2024-12-07T18:30:00.000Z"
+						}
+					}
+				},
+				{
+					"term": {
+						"category.keyword": "JFS"
+					}
+				}
+			]
+		}
+	},
+	"aggs": {
+		"group_by_url": {
+			"terms": {
+				"field": "url.keyword",
+				"size": 10
+			},
+			"aggs": {
+				"avg_uptime": {
+					"avg": {
+						"field": "uptime_percentage"
+					}
+				}
+			}
+		}
+	}
+}
+
+//Yesterday overall uptime %
+GET uptime_index/_search
+{
+	"size": 0,
+	"query": {
+		"bool": {
+			"filter": [
+				{
+					"range": {
+						"@timestamp": {
+							"gte": "now-1d/d",
+							"lt": "now/d"
+						}
+					}
+				},
+				{
+					"term": {
+						"category.keyword": "JFS"
+					}
+				}
+			]
+		}
+	},
+	"aggs": {
+		"group_by_url": {
+			"terms": {
+				"field": "url.keyword",
+				"size": 10
+			},
+			"aggs": {
+				"avg_uptime": {
+					"avg": {
+						"field": "uptime_percentage"
+					}
+				}
+			}
+		}
+	}
+}
+
+//Buckets Specified Interval(2dec12am-8dec12am) with span(1hr)
+GET uptime_index/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "2024-12-01T18:30:00.000Z",
+              "lt": "2024-12-07T18:30:00.000Z"
+            }
+          }
+        },
+		 {
+	       "term": {
+	              "category.keyword": "BLACKROCK_AMC"
+	          }
+         }
+      ]
+    }
+  },
+  "aggs": {
+    "group_by_url": {
+      "terms": {
+        "field": "url.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "hourly_avg": {
+          "date_histogram": {
+            "field": "@timestamp",
+            "fixed_interval": "1h"
+          },
+          "aggs": {
+            "avg_uptime": {
+              "avg": {
+                "field": "uptime_percentage"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+#################################################
+#-----------HAVING NULL------------------
+
+//Buckets Specified Interval(2dec12am-8dec12am)(8-8) with span(1hr)
+GET uptime_index/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "2024-12-01T18:30:00.000Z",
+              "lt": "2024-12-07T18:30:00.000Z"
+            }
+          }
+        },
+		    {
+	       "term": {
+	         "category.keyword": "JFS"
+	       }
+		    },
+        {
+          "script": {
+            "script": {
+              "source": """
+                def adjustedTime = doc['@timestamp'].value.minusHours(5).minusMinutes(30);
+                def hour = adjustedTime.getHour();
+                return hour >= 8 && hour < 20; // 8 AM to 8 PM
+              """,
+              "lang": "painless"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "group_by_url": {
+      "terms": {
+        "field": "url.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "hourly_avg": {
+          "date_histogram": {
+            "field": "@timestamp",
+            "fixed_interval": "1h"
+          },
+          "aggs": {
+            "avg_uptime": {
+              "avg": {
+                "field": "uptime_percentage"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+//-------------REMOVED NULL------------------------
+//Buckets Specified Interval(2dec12am-8dec12am)(8-8) with span(1hr)
+GET uptime_index/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "2024-12-01T18:30:00.000Z",
+              "lt": "2024-12-07T18:30:00.000Z"
+            }
+          }
+        },
+        {
+          "term": {
+            "category.keyword": "JFS"
+          }
+        },
+        {
+          "script": {
+            "script": {
+              "source": """
+                def adjustedTime = doc['@timestamp'].value.minusHours(5).minusMinutes(30);
+                def hour = adjustedTime.getHour();
+                return hour >= 8 && hour < 20; // 8 AM to 8 PM
+              """,
+              "lang": "painless"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "group_by_url": {
+      "terms": {
+        "field": "url.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "hourly_avg": {
+          "date_histogram": {
+            "field": "@timestamp",
+            "fixed_interval": "1h",
+            "min_doc_count": 1
+          },
+          "aggs": {
+            "avg_uptime": {
+              "avg": {
+                "field": "uptime_percentage"
+              }
+            },
+            "filter_null_buckets": {
+              "bucket_selector": {
+                "buckets_path": {
+                  "avgValue": "avg_uptime"
+                },
+                "script": "params.avgValue != null"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+GET uptime_index/_search
+{
+	"size": 0,
+	"query": {
+		"bool": {
+			"filter": [
+				{
+					"range": {
+						"@timestamp": {
+							"gte": "2024-12-01T18:30:00.000Z",
+							"lt": "2024-12-07T18:30:00.000Z"
+						}
+					}
+				},
+				{
+					"term": {
+						"category.keyword": "JFS"
+					}
+				}
+			]
+		}
+	},
+	"aggs": {
+		"group_by_url": {
+			"terms": {
+				"field": "url.keyword",
+				"size": 10
+			},
+			"aggs": {
+				"hourly_avg": {
+					"date_histogram": {
+						"field": "@timestamp",
+						"fixed_interval": "1h"
+					},
+					"aggs": {
+						"avg_uptime": {
+							"avg": {
+								"field": "uptime_percentage"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+######################################################
+#(8-8)
+GET uptime_index/_search
+{
+	"size": 0,
+	"query": {
+		"bool": {
+			"filter": [
+				{
+					"range": {
+						"@timestamp": {
+							"gte": "2024-12-11T18:30:00.000Z",
+							"lt": "2024-12-12T18:30:00.000Z"
+						}
+					}
+				},
+				{
+					"term": {
+						"category.keyword": "JFS"
+					}
+				},
+        {
+          "script": {
+            "script": {
+              "source": """
+                def adjustedTime = doc['@timestamp'].value.minusHours(5).minusMinutes(30);
+                def hour = adjustedTime.getHour();
+                return hour >= 8 && hour < 20; // 8 AM to 8 PM
+              """,
+              "lang": "painless"
+            }
+          }
+        }
+			]
+		}
+	},
+	"aggs": {
+		"group_by_url": {
+			"terms": {
+				"field": "url.keyword",
+				"size": 10
+			},
+			"aggs": {
+				"avg_uptime": {
+					"avg": {
+						"field": "uptime_percentage"
+					}
+				}
+			}
+		}
+	}
+}
+

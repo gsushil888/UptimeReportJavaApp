@@ -1,0 +1,62 @@
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "2024-12-01T18:30:00.000Z",
+              "lt": "2024-12-07T18:30:00.000Z"
+            }
+          }
+        },
+        {
+          "term": {
+            "category.keyword": "JFS"
+          }
+        },
+        {
+          "script": {
+            "script": {
+              "source": "def adjustedTime = doc['@timestamp'].value.minusHours(5).minusMinutes(30);def hour = adjustedTime.getHour();return hour >= 8 && hour < 20;",
+              "lang": "painless"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "group_by_url": {
+      "terms": {
+        "field": "url.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "hourly_avg": {
+          "date_histogram": {
+            "field": "@timestamp",
+            "fixed_interval": "1h",
+            "min_doc_count": 1
+          },
+          "aggs": {
+            "avg_uptime": {
+              "avg": {
+                "field": "uptime_percentage"
+              }
+            },
+            "filter_null_buckets": {
+              "bucket_selector": {
+                "buckets_path": {
+                  "avgValue": "avg_uptime"
+                },
+                "script": "params.avgValue != null"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

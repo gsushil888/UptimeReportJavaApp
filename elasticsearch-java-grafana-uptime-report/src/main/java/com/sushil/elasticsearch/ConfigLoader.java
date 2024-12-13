@@ -7,29 +7,29 @@ import java.util.List;
 import java.util.Properties;
 
 public class ConfigLoader {
-    // Use absolute file system path
-//    private static final String CONFIG_PATH = "src\\main\\resources\\config.properties";
-    private static final String CONFIG_PATH = "/elkapp/app/uptimereports/config.properties";
-    private static final Properties properties = new Properties();
+	// Use absolute file system path
+	private static final String CONFIG_PATH = "src\\main\\resources\\config.properties";
+//    private static final String CONFIG_PATH = "/elkapp/app/uptimereports/config.properties";
+	private static final Properties properties = new Properties();
 
-    // Static block to load configuration
-    static {
-        try (FileInputStream input = new FileInputStream(CONFIG_PATH)) {
-            properties.load(input);
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading config.properties from path: " + CONFIG_PATH, e);
-        }
-    }
+	// Static block to load configuration
+	static {
+		try (FileInputStream input = new FileInputStream(CONFIG_PATH)) {
+			properties.load(input);
+		} catch (IOException e) {
+			throw new RuntimeException("Error loading config.properties from path: " + CONFIG_PATH, e);
+		}
+	}
 
-    public static String get(String key) {
-        return properties.getProperty(key);
-    }
+	public static String get(String key) {
+		return properties.getProperty(key);
+	}
 
-    public static int getInt(String key) {
-        return Integer.parseInt(properties.getProperty(key));
-    }
+	public static int getInt(String key) {
+		return Integer.parseInt(properties.getProperty(key));
+	}
 
-    public static List<String> getList(String key) {
-        return Arrays.asList(properties.getProperty(key).split(","));
-    }
+	public static List<String> getList(String key) {
+		return Arrays.asList(properties.getProperty(key).split(","));
+	}
 }
