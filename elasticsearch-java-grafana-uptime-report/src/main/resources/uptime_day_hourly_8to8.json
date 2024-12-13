@@ -1,0 +1,48 @@
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now-1d/d",
+              "lt": "now/d"
+            }
+          }
+        },
+        {
+          "script": {
+            "script": {
+              "source": "def hour = doc['@timestamp'].value.getHour();def minute = doc['@timestamp'].value.getMinute(); return (hour > 2 || (hour == 2 && minute >= 00)) && (hour < 15 || (hour == 15 && minute <= 0));",
+              "lang": "painless"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "group_by_url": {
+      "terms": {
+        "field": "url.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "hourly_avg": {
+          "date_histogram": {
+            "field": "@timestamp",
+            "fixed_interval": "10m"
+          },
+          "aggs": {
+            "avg_uptime": {
+              "avg": {
+                "field": "uptime_percentage"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

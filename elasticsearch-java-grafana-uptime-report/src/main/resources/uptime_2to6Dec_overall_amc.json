@@ -1,0 +1,37 @@
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+				"gte": "2024-12-01T18:30:00.000Z",
+				"lt": "2024-12-07T06:30:00.000Z"
+            }
+          }
+        },
+ 		 {
+ 	       "term": {
+	              "category.keyword": "BLACKROCK_AMC"
+		      }
+         }
+      ]
+    }
+  },
+  "aggs": {
+    "group_by_url": {
+      "terms": {
+        "field": "url.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "avg_uptime": {
+          "avg": {
+            "field": "uptime_percentage"
+          }
+        }
+      }
+    }
+  }
+}

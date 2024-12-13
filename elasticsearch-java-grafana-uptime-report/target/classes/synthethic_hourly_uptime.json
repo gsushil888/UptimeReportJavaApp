@@ -1,0 +1,59 @@
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now-1h",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "group_by_url": {
+      "terms": {
+        "field": "url.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "total_count": {
+          "value_count": {
+            "field": "email_status.keyword"
+          }
+        },
+        "working_count": {
+          "filter": {
+            "term": {
+              "email_status.keyword": {
+                "value": "N/A"
+              }
+            }
+          }
+        },
+        "not_working_count": {
+          "filter": {
+            "term": {
+              "email_status.keyword": {
+                "value": "Success"
+              }
+            }
+          }
+        },
+        "uptime_percentage": {
+          "bucket_script": {
+            "buckets_path": {
+              "total": "total_count",
+              "working": "working_count._count"
+            },
+            "script": "100 *(params.working / params.total)"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "size": 0,
+  "query": {
+    "match_all": {}
+  },
+  "aggs": {
+    "group_by_url": {
+      "terms": {
+        "field": "url.keyword",
+        "size": 10
+      },
+      "aggs": {
+        "hourly_avg": {
+          "date_histogram": {
+            "field": "@timestamp",
+            "calendar_interval": "hour"
+          },
+          "aggs": {
+            "avg_uptime": {
+              "avg": {
+                "field": "uptime_percentage"
+              }
+            },
+            "url": {
+              "terms": {
+                "field": "url.keyword",
+                "size": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
