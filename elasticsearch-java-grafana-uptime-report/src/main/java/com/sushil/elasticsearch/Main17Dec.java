@@ -47,7 +47,7 @@ import jakarta.activation.*;
 
 import java.util.Properties;
 
-public class Main16DecOverallTest {
+public class Main17Dec {
 
 	private static final String JSON_FILE_PATH_JFS = ConfigLoader.get("json.file.path.jfs");
 	private static final String JSON_FILE_PATH_OVERALL_JFS = ConfigLoader.get("json.file.path.overall.jfs");
@@ -67,7 +67,7 @@ public class Main16DecOverallTest {
 	private static final String EMAIL_HOST = ConfigLoader.get("email.host");
 	private static final String EMAIL_USERNAME = ConfigLoader.get("email.username");
 	private static final String EMAIL_PASSWORD = ConfigLoader.get("email.password");
-	private static Logger logger = LoggerFactory.getLogger(Main13DecOverall.class);
+	private static Logger logger = LoggerFactory.getLogger(Main17Dec.class);
 	private static final DateTimeFormatter ISO_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 	private static String REPORT_FROM = "";
@@ -92,9 +92,9 @@ public class Main16DecOverallTest {
 		Map<String, String> reportDatesAMC = generateAndSetReportPdf("BLACKROCK AMC", PDF_FILE_PATH_AMC,
 				JSON_FILE_PATH_AMC, JSON_FILE_PATH_OVERALL_AMC);
 		pdfFilePaths.add(reportDatesAMC.get("pdfPath"));
-
+		
 		// Send single email with multiple attachments
-		String emailSubject = "Test Reports";
+		String emailSubject = "Uptime Reports";
 		String emailMessage = "Dear Team,\n\nPlease find the attached Uptime Reports for your reference.\n\n"
 				+ "Report Period: \n" + REPORT_FROM + " to " + REPORT_TO + "\n\n"
 				+ "Entities: \nJFS, BLACKROCK WMC, BLACKROCK AMC\n\n"
