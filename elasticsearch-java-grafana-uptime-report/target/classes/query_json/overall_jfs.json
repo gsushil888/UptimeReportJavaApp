@@ -6,8 +6,8 @@
 				{
 					"range": {
 						"@timestamp": {
-							"gte": "now-1d/d",
-							"lt": "now/d",
+							"gte": "now-32d/d",
+							"lt": "now-31d/d",
 							"time_zone": "+05:30"
 						}
 					}

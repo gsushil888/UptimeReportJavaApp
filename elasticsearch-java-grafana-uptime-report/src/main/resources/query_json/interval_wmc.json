@@ -30,7 +30,8 @@
 				"hourly_avg": {
 					"date_histogram": {
 						"field": "@timestamp",
-						"fixed_interval": "10m"
+						"fixed_interval": "10m",
+						"time_zone": "+05:30"
 					},
 					"aggs": {
 						"avg_uptime": {

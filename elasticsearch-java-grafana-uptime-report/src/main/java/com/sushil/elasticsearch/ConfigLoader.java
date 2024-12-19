@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Properties;
 
 public class ConfigLoader {
-	
+
 //	private static final String CONFIG_PATH = "src\\main\\resources\\config.properties";
 //    private static final String CONFIG_PATH = "/elkapp/app/uptimereports/config.properties";
-	
-//	private static final String CONFIG_PATH = "src\\main\\resources\\config\\config_17Dec.properties";
-	private static final String CONFIG_PATH = "/elkapp/app/uptimereports/config/config_final.properties";
+
+	private static final String CONFIG_PATH = "src\\main\\resources\\config\\config_final.properties";
+//	private static final String CONFIG_PATH = "/elkapp/app/uptimereports/config/config_final.properties";
 
 	private static final Properties properties = new Properties();
 
